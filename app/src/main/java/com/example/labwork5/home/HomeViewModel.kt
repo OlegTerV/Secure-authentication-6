@@ -161,4 +161,19 @@ class HomeViewModel(): AppCompatActivity() {
 
         return result
     }
+
+    //скатал откуда-то
+    @SuppressLint("SimpleDateFormat")
+    fun convertLongToInstant(date: Long?): Instant? {
+        var result: Instant? = null
+        if (date != null) {
+            val date = Date(date)
+            val format = SimpleDateFormat("yyyy-MM-dd")
+            val defDate = format.format(date)
+            val defTime = "00:00"
+            result = ZonedDateTime.of(LocalDate.parse(defDate), LocalTime.parse(defTime), ZoneId.systemDefault()).toInstant()
+        }
+
+        return result
+    }
 }

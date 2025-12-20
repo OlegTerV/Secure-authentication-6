@@ -1,6 +1,7 @@
 package com.example.labwork5.home
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,6 +50,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.window.Dialog
 import com.example.labwork5.R
 import kotlinx.coroutines.runBlocking
+import java.util.Date
 
 object HomeDestination :NavigationDestination {
     override val route = "homeRoute"
@@ -89,6 +91,8 @@ fun HomeScreen(
     val countStepsAdd = remember { mutableStateOf("") }
 
     val recordList = remember { mutableStateListOf<RecordInterface>() }
+
+    val currrentDate = Date()
 
     SnackbarHost(hostState = snackState, Modifier)
 
@@ -233,33 +237,38 @@ fun HomeScreen(
 
                             Button(
                                 onClick = {
-                                    runBlocking {
-                                        homeViewModel.addRange(
-                                            dateRangeStart_2.value,
-                                            dateRangeEnd_2.value,
-                                            countStepsAdd.value.toLong()
-                                        )
+                                    if (currrentDate.toInstant() < homeViewModel.convertLongToInstant(dateRangeStart_2.value)) {
+                                        Toast.makeText(context, "Нельзя менять количество шагов в будущем", Toast.LENGTH_LONG).show()
                                     }
-                                    recordList.add(
-                                        object : RecordInterface {
-                                            override val startDate = dateRangeStartString_2
-                                            override val endDate = dateRangeEndString_2
-                                            override val startDateLongMilliseconds =
-                                                dateRangeStart_2.value ?: 0
-                                            override val endDateLongMilliseconds =
-                                                dateRangeEnd_2.value ?: 0
-                                            override val count = countStepsAdd.value
-                                        }
-                                    )
-                                    if (dateRangeEnd.value != null) {
-                                        allSteps.value = runBlocking {
-                                            homeViewModel.getData(
-                                                dateRangeStart.value,
-                                                dateRangeEnd.value
+                                    else {
+                                        runBlocking {
+                                            homeViewModel.addRange(
+                                                dateRangeStart_2.value,
+                                                dateRangeEnd_2.value,
+                                                countStepsAdd.value.toLong()
                                             )
                                         }
+                                        recordList.add(
+                                            object : RecordInterface {
+                                                override val startDate = dateRangeStartString_2
+                                                override val endDate = dateRangeEndString_2
+                                                override val startDateLongMilliseconds =
+                                                    dateRangeStart_2.value ?: 0
+                                                override val endDateLongMilliseconds =
+                                                    dateRangeEnd_2.value ?: 0
+                                                override val count = countStepsAdd.value
+                                            }
+                                        )
+                                        if (dateRangeEnd.value != null) {
+                                            allSteps.value = runBlocking {
+                                                homeViewModel.getData(
+                                                    dateRangeStart.value,
+                                                    dateRangeEnd.value
+                                                )
+                                            }
+                                        }
+                                        openDialogAddRange.value = false
                                     }
-                                    openDialogAddRange.value = false
                                 }) { Text("Сохранить", fontSize = 22.sp) }
                         }
                         if (openDialogRangeSelection_2.value) {
