@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">LabWork5</string>
+    <string name="dateField">Date</string>
+    <string name="latField">Latitude</string>
+    <string name="lonField">Longitude</string>
+    <string name="deviceField">Device</string>
+    <string name="modelField">Model</string>
+    <string name="stepsCount">Steps</string>
+    <string name="typeCount">Количество шагов</string>
+
+</resources>
