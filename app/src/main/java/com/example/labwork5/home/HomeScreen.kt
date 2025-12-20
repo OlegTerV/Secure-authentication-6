@@ -69,7 +69,6 @@ fun HomeScreen(
     val screenWidth = configuration.screenWidthDp
     val specificPaddings = (screenWidth * 0.03).dp
 
-     val stateDate_2 = rememberDateRangePickerState()
     val openDialogRangeSelection = remember{ mutableStateOf(false) }
     val openDialogAddRange = remember{ mutableStateOf(false) }
     val openDialogRangeSelection_2= remember{ mutableStateOf(false) }
@@ -171,6 +170,9 @@ fun HomeScreen(
             }
 
             if (openDialogRangeSelection.value) {
+                DatePicker(listOf(dateRangeStart, dateRangeEnd, openDialogRangeSelection, allSteps), homeViewModel)
+
+                /*
                 DatePickerDialog(
                     onDismissRequest = {openDialogRangeSelection.value = false},
                     confirmButton = {
@@ -197,7 +199,7 @@ fun HomeScreen(
                         state = stateDate,
                         modifier = Modifier.weight(1f)
                     )
-                }
+                }*/
             }
 
             if (openDialogAddRange.value) {
@@ -261,6 +263,8 @@ fun HomeScreen(
                                 }) { Text("Сохранить", fontSize = 22.sp) }
                         }
                         if (openDialogRangeSelection_2.value) {
+                            DatePicker(listOf(dateRangeStart_2, dateRangeEnd_2, openDialogRangeSelection_2), homeViewModel)
+                            /*
                             DatePickerDialog(
                                 onDismissRequest = { openDialogRangeSelection_2.value = false },
                                 confirmButton = {
@@ -288,7 +292,7 @@ fun HomeScreen(
                                     state = stateDate_2,
                                     modifier = Modifier.weight(1f)
                                 )
-                            }
+                            }*/
                         }
                     }
                 }

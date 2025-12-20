@@ -117,7 +117,7 @@ class HomeViewModel(): AppCompatActivity() {
                 startZoneOffset = ZoneOffset.UTC,
                 endZoneOffset = ZoneOffset.UTC,
                 metadata = Metadata.autoRecorded(
-                    device = Device(type = Device.TYPE_WATCH)
+                    device = Device(type = Device.TYPE_PHONE)
                 )
             )
 
