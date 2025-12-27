@@ -9,12 +9,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePicker(parametersList: List<Any>, homeViewModel: HomeViewModel) {
+fun DatePicker(recordsList: SnapshotStateList<RecordInterface>, parametersList: List<Any>, homeViewModel: HomeViewModel? = null, mode: String? = null) {
     val stateDate = rememberDateRangePickerState()
 
     val dateStart:  MutableState<Long?> = parametersList[0] as MutableState<Long?>
@@ -33,14 +34,40 @@ fun DatePicker(parametersList: List<Any>, homeViewModel: HomeViewModel) {
                 onClick = {
                     dateStart.value = stateDate.selectedStartDateMillis
                     dateEnd.value = stateDate.selectedEndDateMillis
+
+                    if (mode == "delete") {
+                        runBlocking { homeViewModel!!.deleteStepsInfo(dateStart.value, dateEnd.value) }
+
+                        val iterator = recordsList.iterator()
+                        while(iterator.hasNext()){
+                            val item = iterator.next()
+                            if ((!((item.startDateLongMilliseconds> dateStart.value!!) && (item.endDateLongMilliseconds > dateEnd.value!!))) &&
+                                    (!((item.startDateLongMilliseconds> dateStart.value!!) && (item.endDateLongMilliseconds > dateEnd.value!!))))
+                            {
+                                iterator.remove()
+                            }
+                        }
+
+                        /*
+                        recordsList.map { oneRecord ->
+                            if (!((oneRecord.startDateLongMilliseconds> dateStart.value!!) && (oneRecord.endDateLongMilliseconds > dateEnd.value!!))){
+                                recordsList.remove(oneRecord)
+                            }
+                            if (!((oneRecord.startDateLongMilliseconds< dateStart.value!!) && (oneRecord.endDateLongMilliseconds < dateEnd.value!!))){
+                                recordsList.remove(oneRecord)
+                            }
+                        }*/
+                    }
+
                     if (allSteps != null) {
                         allSteps.value = runBlocking {
-                            homeViewModel.getData(
+                            homeViewModel!!.getData(
                                 dateStart.value,
                                 dateEnd.value
                             )
                         }
                     }
+
                     modalState.value = false
                 }
             ) {

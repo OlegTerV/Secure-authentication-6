@@ -46,7 +46,7 @@ fun OneRecordView (
             modifier = Modifier.padding(10.dp).width((screenWidth * 0.5).dp)
         )
         IconButton(onClick = {
-            runBlocking {homeViewModel.addRange(oneRecord.startDateLongMilliseconds, oneRecord.endDateLongMilliseconds, 0)}
+            runBlocking {homeViewModel.reduceStepsCount(oneRecord.startDateLongMilliseconds, oneRecord.endDateLongMilliseconds, oneRecord.count.toLong())}
             if (dateRangeEnd.value != null) { allSteps.value = runBlocking {homeViewModel.getData(dateRangeStart.value, dateRangeEnd.value) }}
             removeRecord()
         }) {

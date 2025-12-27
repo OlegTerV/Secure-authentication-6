@@ -1,12 +1,9 @@
 package com.example.labwork5.home
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.platform.LocalContext
 import androidx.health.connect.client.HealthConnectClient
 import androidx.core.net.toUri
 import androidx.health.connect.client.HealthConnectFeatures
@@ -107,6 +104,34 @@ class HomeViewModel(): AppCompatActivity() {
             return
         }
 
+        var currentStepsCount = getData(startTime, endTime)
+
+        val dates = convertLongToInstant(startTime, endTime)
+
+        try {
+            val stepsRecord = StepsRecord(
+                count = (countOfSteps + currentStepsCount.toLong()),
+                startTime = dates[0]!!,
+                endTime = dates[1]!!,
+                startZoneOffset = ZoneOffset.UTC,
+                endZoneOffset = ZoneOffset.UTC,
+                metadata = Metadata.autoRecorded(
+                    device = Device(type = Device.TYPE_PHONE)
+                )
+            )
+
+            healthConnectClient!!.insertRecords(listOf(stepsRecord))
+        } catch (e: Exception) {
+            throw Exception("Add data error")
+        }
+    }
+
+    @SuppressLint("Range")
+    suspend fun deleteStepsInfo(startTime: Long?, endTime: Long?) {
+        if (healthConnectClient == null) {
+            return
+        }
+        val countOfSteps: Long = 0
         val dates = convertLongToInstant(startTime, endTime)
 
         try {
@@ -127,9 +152,36 @@ class HomeViewModel(): AppCompatActivity() {
         }
     }
 
+    @SuppressLint("Range")
+    suspend fun reduceStepsCount(startTime: Long?, endTime: Long?, count: Long) {
+        if (healthConnectClient == null) {
+            return
+        }
+        var currentStepsCount = getData(startTime, endTime)
+
+        val dates = convertLongToInstant(startTime, endTime)
+
+        try {
+            val stepsRecord = StepsRecord(
+                count = (currentStepsCount.toLong() - count),
+                startTime = dates[0]!!,
+                endTime = dates[1]!!,
+                startZoneOffset = ZoneOffset.UTC,
+                endZoneOffset = ZoneOffset.UTC,
+                metadata = Metadata.autoRecorded(
+                    device = Device(type = Device.TYPE_PHONE)
+                )
+            )
+
+            healthConnectClient!!.insertRecords(listOf(stepsRecord))
+        } catch (e: Exception) {
+            throw Exception("Add data error")
+        }
+    }
+
     //скатал со stackOverflow
     @SuppressLint("SimpleDateFormat")
-    fun convertLongToDate(date: Long?): String {
+    fun convertDateLongToString(date: Long?): String {
         if (date != null) {
             val date = Date(date)
             val format = SimpleDateFormat("dd.MM.yyyy")

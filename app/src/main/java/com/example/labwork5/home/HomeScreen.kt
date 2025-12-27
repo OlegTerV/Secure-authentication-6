@@ -2,22 +2,17 @@ package com.example.labwork5.home
 
 import android.annotation.SuppressLint
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -26,11 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,18 +65,24 @@ fun HomeScreen(
     val openDialogRangeSelection = remember{ mutableStateOf(false) }
     val openDialogAddRange = remember{ mutableStateOf(false) }
     val openDialogRangeSelection_2= remember{ mutableStateOf(false) }
+    val openDialogDeleteSteps = remember { mutableStateOf(false) }
     val snackState = remember { SnackbarHostState() }
     val snackScope = rememberCoroutineScope()
 
     val dateRangeStart = remember {mutableStateOf<Long?>(null)}
-    val dateRangeStartString = homeViewModel.convertLongToDate(dateRangeStart.value)
+    val dateRangeStartString = homeViewModel.convertDateLongToString(dateRangeStart.value)
     val dateRangeEnd = remember {mutableStateOf<Long?>(null)}
-    val dateRangeEndString = homeViewModel.convertLongToDate(dateRangeEnd.value)
+    val dateRangeEndString = homeViewModel.convertDateLongToString(dateRangeEnd.value)
 
     val dateRangeStart_2 = remember {mutableStateOf<Long?>(null)}
-    val dateRangeStartString_2 = homeViewModel.convertLongToDate(dateRangeStart_2.value)
+    val dateRangeStartString_2 = homeViewModel.convertDateLongToString(dateRangeStart_2.value)
     val dateRangeEnd_2 = remember {mutableStateOf<Long?>(null)}
-    val dateRangeEndString_2 = homeViewModel.convertLongToDate(dateRangeEnd_2.value)
+    val dateRangeEndString_2 = homeViewModel.convertDateLongToString(dateRangeEnd_2.value)
+
+    val dateRangeStart_3 = remember {mutableStateOf<Long?>(null)}
+    val dateRangeStartString_3 = homeViewModel.convertDateLongToString(dateRangeStart_2.value)
+    val dateRangeEnd_3 = remember {mutableStateOf<Long?>(null)}
+    val dateRangeEndString_3 = homeViewModel.convertDateLongToString(dateRangeEnd_2.value)
 
     val allSteps = remember { mutableStateOf("-") }
     val countStepsAdd = remember { mutableStateOf("") }
@@ -170,12 +167,15 @@ fun HomeScreen(
             }
 
             Button(onClick = { openDialogAddRange.value = true }, modifier = Modifier.padding(innerPadding)) {
-                Text("Добавить запись", fontSize = 22.sp)
+                Text("Добавить количество шагов", fontSize = 22.sp)
+            }
+
+            Button(onClick = { openDialogDeleteSteps.value = true }, modifier = Modifier.padding(innerPadding)) {
+                Text("Стереть данные о шагах", fontSize = 22.sp)
             }
 
             if (openDialogRangeSelection.value) {
-                DatePicker(listOf(dateRangeStart, dateRangeEnd, openDialogRangeSelection, allSteps), homeViewModel)
-
+                DatePicker(recordList, listOf(dateRangeStart, dateRangeEnd, openDialogRangeSelection, allSteps), homeViewModel)
                 /*
                 DatePickerDialog(
                     onDismissRequest = {openDialogRangeSelection.value = false},
@@ -272,7 +272,7 @@ fun HomeScreen(
                                 }) { Text("Сохранить", fontSize = 22.sp) }
                         }
                         if (openDialogRangeSelection_2.value) {
-                            DatePicker(listOf(dateRangeStart_2, dateRangeEnd_2, openDialogRangeSelection_2), homeViewModel)
+                            DatePicker(recordList, listOf(dateRangeStart_2, dateRangeEnd_2, openDialogRangeSelection_2))
                             /*
                             DatePickerDialog(
                                 onDismissRequest = { openDialogRangeSelection_2.value = false },
@@ -335,10 +335,10 @@ fun HomeScreen(
                     modifier = Modifier.weight(1f)
                 )
             }*/
+
+            if (openDialogDeleteSteps.value) {
+                DatePicker(recordList, listOf(dateRangeStart_3, dateRangeEnd_3, openDialogDeleteSteps, allSteps), homeViewModel, "delete")
+            }
         }
     }
 }
-
-/*
-TODO(): стили для списка и окна доавбления записей (линии под последней записью быть не должно)
- */
